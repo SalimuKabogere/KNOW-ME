@@ -17,8 +17,9 @@ const config: Config = {
         },
         surface: {
           light: "#E9E9E9",
-          ink: "#1F1A18",
-          charcoal: "#443937",
+          ink: "#000000",
+          raise: "#0B0B0C",
+          charcoal: "#16161a",
         },
         neutral: {
           warm: "#A88C84",

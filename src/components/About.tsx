@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Code2, ShieldCheck, CloudCog, Server } from "lucide-react";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 import SectionTitle from "./SectionTitle";
+import Corners from "./Corners";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -44,28 +45,36 @@ export default function About() {
   useIsomorphicLayoutEffect(() => {
     if (!ref.current) return;
     const ctx = gsap.context(() => {
-      gsap.from("[data-about-card]", {
-        y: 36,
-        opacity: 0,
-        duration: 0.9,
-        ease: "power3.out",
-        stagger: 0.15,
-        scrollTrigger: {
-          trigger: "[data-about-grid]",
-          start: "top 80%",
-        },
-      });
+      gsap.fromTo(
+        "[data-about-card]",
+        { y: 36, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: "power3.out",
+          stagger: 0.15,
+          scrollTrigger: {
+            trigger: "[data-about-grid]",
+            start: "top 80%",
+          },
+        }
+      );
 
-      gsap.from("[data-about-paragraph]", {
-        y: 24,
-        opacity: 0,
-        duration: 0.9,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: "[data-about-paragraph]",
-          start: "top 85%",
-        },
-      });
+      gsap.fromTo(
+        "[data-about-paragraph]",
+        { y: 24, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "[data-about-paragraph]",
+            start: "top 85%",
+          },
+        }
+      );
     }, ref);
     return () => ctx.revert();
   }, []);
@@ -98,7 +107,7 @@ export default function About() {
             responsibly into real-world products.
           </p>
 
-          <div className="glass rounded-2xl p-6 sm:p-7">
+          <div className="card-frame group p-6 sm:p-7">
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-brand-primary">
               Currently
             </p>
@@ -119,6 +128,7 @@ export default function About() {
                 Flutter on the side.
               </li>
             </ul>
+            <Corners inset />
           </div>
         </div>
 
@@ -126,27 +136,18 @@ export default function About() {
           data-about-grid
           className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {pillars.map(({ icon: Icon, title, body, accent }) => (
+          {pillars.map(({ icon: Icon, title, body }) => (
             <div
               key={title}
               data-about-card
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 transition-all hover:-translate-y-1 hover:border-brand-primary/40 hover:shadow-glow-soft"
+              className="card-frame group p-6"
             >
-              <div
-                className={`pointer-events-none absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${accent}`}
-              />
-              <div className="relative">
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-brand-primary/30 bg-brand-primary/10 text-brand-primary">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h3 className="mt-5 text-lg font-semibold text-white">
-                  {title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/60">
-                  {body}
-                </p>
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-brand-primary/30 bg-brand-primary/10 text-brand-primary">
+                <Icon className="h-5 w-5" />
               </div>
-              <div className="pointer-events-none absolute -bottom-12 -right-12 h-32 w-32 rounded-full bg-brand-primary/10 blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-0" />
+              <h3 className="mt-5 text-lg font-semibold text-white">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/60">{body}</p>
+              <Corners inset />
             </div>
           ))}
         </div>

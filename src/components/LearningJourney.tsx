@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 import SectionTitle from "./SectionTitle";
+import Corners from "./Corners";
 import { learningJourney } from "@/data/learning";
 
 if (typeof window !== "undefined") {
@@ -44,40 +45,51 @@ export default function LearningJourney() {
     if (!ref.current) return;
     const ctx = gsap.context(() => {
       // Animate timeline line growing
-      gsap.from("[data-timeline-line]", {
-        scaleY: 0,
-        transformOrigin: "top center",
-        duration: 1.4,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: "[data-timeline]",
-          start: "top 80%",
-        },
-      });
+      gsap.fromTo(
+        "[data-timeline-line]",
+        { scaleY: 0, transformOrigin: "top center" },
+        {
+          scaleY: 1,
+          duration: 1.4,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "[data-timeline]",
+            start: "top 80%",
+          },
+        }
+      );
 
       // Animate items in sequence
-      gsap.from("[data-timeline-item]", {
-        x: (i) => (i % 2 === 0 ? -40 : 40),
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        stagger: 0.18,
-        scrollTrigger: {
-          trigger: "[data-timeline]",
-          start: "top 75%",
-        },
-      });
+      gsap.fromTo(
+        "[data-timeline-item]",
+        { x: (i) => (i % 2 === 0 ? -40 : 40), opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.18,
+          scrollTrigger: {
+            trigger: "[data-timeline]",
+            start: "top 75%",
+          },
+        }
+      );
 
-      gsap.from("[data-timeline-dot]", {
-        scale: 0,
-        duration: 0.5,
-        ease: "back.out(2)",
-        stagger: 0.18,
-        scrollTrigger: {
-          trigger: "[data-timeline]",
-          start: "top 75%",
-        },
-      });
+      gsap.fromTo(
+        "[data-timeline-dot]",
+        { scale: 0 },
+        {
+          scale: 1,
+          duration: 0.5,
+          ease: "back.out(2)",
+          stagger: 0.18,
+          scrollTrigger: {
+            trigger: "[data-timeline]",
+            start: "top 75%",
+          },
+        }
+      );
     }, ref);
     return () => ctx.revert();
   }, []);
@@ -86,7 +98,7 @@ export default function LearningJourney() {
     <section
       id="learning"
       ref={ref}
-      className="section-pad relative bg-[#19161486]"
+      className="section-pad relative"
     >
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-30 mask-radial" />
       <div className="container-x relative">
@@ -139,7 +151,7 @@ export default function LearningJourney() {
                     }`}
                   >
                     <div
-                      className={`glass rounded-2xl p-6 transition-all hover:border-brand-primary/40 hover:shadow-glow-soft ${
+                      className={`card-frame group p-6 ${
                         isLeft ? "md:ml-auto" : ""
                       }`}
                     >
@@ -182,6 +194,7 @@ export default function LearningJourney() {
                           {item.status}
                         </span>
                       </div>
+                      <Corners inset />
                     </div>
                   </div>
                 </li>

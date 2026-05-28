@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ScrollManager from "@/components/ScrollManager";
+import StatusBar from "@/components/StatusBar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -39,7 +43,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1F1A18",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -50,7 +54,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable}`}>
       <body className="bg-surface-ink text-[#ECECEC] font-sans antialiased selection:bg-brand-primary/30">
-        {children}
+        <ScrollManager />
+        <Navbar />
+        <main className="relative min-h-screen">{children}</main>
+        <Footer />
+        <StatusBar />
       </body>
     </html>
   );

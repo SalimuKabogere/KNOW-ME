@@ -1,88 +1,67 @@
-import { Github, Linkedin, Mail, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { site } from "@/data/site";
+
+const links = [
+  { label: "GitHub", href: site.github, external: true },
+  { label: "LinkedIn", href: site.linkedin, external: true },
+  { label: "Email", href: `mailto:${site.email}`, external: false },
+  { label: "CV", href: site.cvUrl, external: true },
+];
 
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="relative border-t border-white/5 bg-[#16120F]">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-primary/40 to-transparent" />
-      <div className="container-x px-5 py-14 sm:px-8 lg:px-16">
-        <div className="grid gap-10 md:grid-cols-3">
+    <footer className="relative z-10 border-t border-white/10 bg-surface-ink">
+      <div className="container-x px-5 pt-20 sm:px-8 lg:px-16">
+        {/* CTA + links */}
+        <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
           <div>
-            <div className="flex items-center gap-2.5">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient text-sm font-bold text-white shadow-glow-blue">
-                {site.initials}
-              </span>
-              <span className="text-base font-semibold text-white">
-                {site.name}
-              </span>
-            </div>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/55">
-              {site.tagline}
-            </p>
+            <p className="hud-label">Have something to build?</p>
+            <a
+              href={`mailto:${site.email}`}
+              className="group mt-4 inline-flex items-center gap-3 text-2xl font-extralight tracking-tight text-white transition-colors hover:text-brand-primary sm:text-4xl"
+            >
+              {site.email}
+              <ArrowUpRight className="h-6 w-6 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+            </a>
           </div>
 
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-white/40">
-              Elsewhere
-            </p>
-            <ul className="mt-4 space-y-2.5">
-              <li>
+          <ul className="flex flex-wrap gap-x-8 gap-y-3">
+            {links.map((l) => (
+              <li key={l.label}>
                 <a
-                  href={site.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex items-center gap-2 text-sm text-white/75 hover:text-white"
+                  href={l.href}
+                  target={l.external ? "_blank" : undefined}
+                  rel={l.external ? "noreferrer" : undefined}
+                  className="group inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/55 transition-colors hover:text-white"
                 >
-                  <Github className="h-4 w-4" /> GitHub
-                  <ArrowUpRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0" />
+                  {l.label}
+                  <ArrowUpRight className="h-3 w-3 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                 </a>
               </li>
-              <li>
-                <a
-                  href={site.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group inline-flex items-center gap-2 text-sm text-white/75 hover:text-white"
-                >
-                  <Linkedin className="h-4 w-4" /> LinkedIn
-                  <ArrowUpRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0" />
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${site.email}`}
-                  className="group inline-flex items-center gap-2 text-sm text-white/75 hover:text-white"
-                >
-                  <Mail className="h-4 w-4" /> {site.email}
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-white/40">
-              Based in
-            </p>
-            <p className="mt-4 text-sm text-white/75">
-              {site.location} — available for remote work and collaboration.
-            </p>
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/5 px-3 py-1 text-xs text-emerald-300">
-              <span className="relative inline-flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-              </span>
-              Open to opportunities
-            </div>
-          </div>
+            ))}
+          </ul>
         </div>
 
-        <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/5 pt-6 text-xs text-white/40 sm:flex-row sm:items-center">
-          <p>
-            © {year} {site.name}. Built with Next.js, Tailwind, and GSAP.
-          </p>
-          <p className="font-mono">crafted in Uganda · {year}</p>
+        {/* Meta row */}
+        <div className="mt-16 flex flex-col gap-2 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <span className="hud-label">© {year} {site.name}</span>
+          <span className="hud-label">{site.location} — Open to work</span>
+          <span className="hud-label">Learn by breaking</span>
         </div>
+      </div>
+
+      {/* Giant wordmark */}
+      <div className="relative mt-10 overflow-hidden">
+        <p
+          className="select-none whitespace-nowrap pb-10 text-center font-extralight leading-[0.8] tracking-[-0.02em] text-white/90 text-[21vw]"
+          style={{
+            textShadow:
+              "0 0 25px rgba(121, 178, 218, 0.45), 0 0 70px rgba(121, 178, 218, 0.3), 0 10px 40px rgba(48, 108, 147, 0.35)",
+          }}
+        >
+          SALIMU
+        </p>
       </div>
     </footer>
   );

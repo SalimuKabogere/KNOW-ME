@@ -30,17 +30,21 @@ export default function SectionTitle({
     if (!ref.current) return;
     const ctx = gsap.context(() => {
       const items = ref.current!.querySelectorAll("[data-anim]");
-      gsap.from(items, {
-        y: 28,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        stagger: 0.08,
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 85%",
-        },
-      });
+      gsap.fromTo(
+        items,
+        { y: 28, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.08,
+          scrollTrigger: {
+            trigger: ref.current,
+            start: "top 85%",
+          },
+        }
+      );
     }, ref);
     return () => ctx.revert();
   }, []);
@@ -49,30 +53,32 @@ export default function SectionTitle({
   return (
     <div
       ref={ref}
-      className={`mb-16 sm:mb-20 ${
-        isCenter ? "mx-auto max-w-4xl text-center" : "max-w-3xl"
+      className={`mb-14 sm:mb-16 ${
+        isCenter ? "mx-auto max-w-3xl text-center" : "max-w-3xl"
       }`}
     >
       {eyebrow && (
         <p
           data-anim
-          className="mb-5 inline-flex items-center gap-2 rounded-full border border-brand-primary/30 bg-brand-primary/5 px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-brand-primary"
+          className={`mb-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45 ${
+            isCenter ? "justify-center" : ""
+          }`}
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-brand-primary shadow-[0_0_10px_rgba(121,178,218,0.8)]" />
+          <span className="h-px w-8 bg-white/25" />
           {eyebrow}
         </p>
       )}
       <h2
         data-anim
-        className="text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[4.5rem]"
+        className="text-balance text-3xl font-extralight leading-[1.1] tracking-tight text-white sm:text-4xl lg:text-5xl"
       >
         {title}{" "}
-        {highlight && <span className="text-gradient-blue">{highlight}</span>}
+        {highlight && <span className="text-brand-primary">{highlight}</span>}
       </h2>
       {subtitle && (
         <p
           data-anim
-          className={`mt-6 text-base leading-relaxed text-white/60 sm:text-lg ${
+          className={`mt-5 text-sm leading-relaxed text-white/55 sm:text-base ${
             isCenter ? "mx-auto max-w-2xl" : "max-w-2xl"
           }`}
         >
