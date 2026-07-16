@@ -76,19 +76,6 @@ export default function Hero() {
         { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 },
         "-=0.4"
       );
-
-      // Scroll-linked fade/scale as the next section rises over the pinned hero
-      gsap.to("[data-hero-fade]", {
-        opacity: 0.2,
-        scale: 0.96,
-        ease: "none",
-        scrollTrigger: {
-          trigger: root.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
     }, root);
 
     return () => ctx.revert();
@@ -98,7 +85,7 @@ export default function Hero() {
     <section
       id="home"
       ref={root}
-      className="sticky top-0 z-0 flex min-h-screen items-center justify-center overflow-hidden px-5 pb-28 pt-28 sm:px-8 lg:px-16"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 pb-28 pt-28 sm:px-8 lg:px-16"
     >
       {/* Subtle background */}
       <div className="pointer-events-none absolute inset-0 -z-10">
@@ -107,23 +94,40 @@ export default function Hero() {
         <HeroScene />
       </div>
 
-      <div
-        data-hero-fade
-        className="container-x flex flex-col items-center text-center"
-      >
-        {/* Portrait */}
+      <div className="container-x flex flex-col items-center text-center">
+        {/* Portrait with rotating "open to work" badge ring */}
         <div
           data-hero-portrait
-          className="relative mb-8 h-24 w-24 overflow-hidden rounded-full border border-white/10 ring-soft sm:h-28 sm:w-28"
+          className="group relative mb-8 h-40 w-40 sm:h-44 sm:w-44"
         >
-          <Image
-            src="/profile.png"
-            alt={site.name}
-            fill
-            priority
-            sizes="112px"
-            className="object-cover"
-          />
+          <svg
+            viewBox="0 0 176 176"
+            aria-hidden
+            className="absolute inset-0 h-full w-full animate-[spin_18s_linear_infinite]"
+          >
+            <defs>
+              <path
+                id="hero-badge-orbit"
+                d="M 88,88 m -76,0 a 76,76 0 1,1 152,0 a 76,76 0 1,1 -152,0"
+                fill="none"
+              />
+            </defs>
+            <text className="fill-white/40 font-mono text-[10.5px] uppercase tracking-[0.32em] transition-colors duration-500 group-hover:fill-[#E6C079]">
+              <textPath href="#hero-badge-orbit">
+                Open to work · Open to work · Open to work ·
+              </textPath>
+            </text>
+          </svg>
+          <div className="absolute inset-0 m-auto h-24 w-24 overflow-hidden rounded-full border border-white/10 ring-soft transition-colors duration-500 group-hover:border-[#E6C079]/70 sm:h-28 sm:w-28">
+            <Image
+              src="/profile.png"
+              alt={site.name}
+              fill
+              priority
+              sizes="112px"
+              className="object-cover transition-[filter] duration-500 ease-out group-hover:[filter:sepia(0.85)_saturate(1.35)_hue-rotate(-12deg)_brightness(0.98)]"
+            />
+          </div>
         </div>
 
         {/* Kicker */}
