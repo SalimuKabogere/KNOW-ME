@@ -1,8 +1,9 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 
 /**
  * Barba-style SPA transitions for the Next.js App Router: a full-screen
@@ -12,10 +13,10 @@ import { gsap } from "@/lib/gsap";
  * chrome (Navbar/Footer/StatusBar) lives outside this component and never
  * unmounts, only the routed `children` container transitions.
  *
- * Navigations can interrupt an in-flight transition (fast nav clicks): each
- * run kills whatever timeline is active and re-establishes a known baseline
- * via `gsap.set()` before tweening, so a new navigation always restarts the
- * curtain cleanly instead of getting stuck mid-animation.
+ * Interrupted navigations are first-class: a new navigation kills whatever
+ * timeline is in flight and tweens from the curtain's current position, and
+ * navigating back to the still-displayed route mid-transition (fast A→B→A)
+ * unwinds the curtain instead of leaving it frozen over the page.
  */
 export default function PageTransition({
   children,
@@ -23,8 +24,9 @@ export default function PageTransition({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const [displayChildren, setDisplayChildren] = useState(children);
-  const [displayPathname, setDisplayPathname] = useState(pathname);
+  // What's actually on screen. Deliberately lags `pathname`: the swap happens
+  // only once the curtain fully covers the old page.
+  const [display, setDisplay] = useState({ children, pathname });
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -41,7 +43,7 @@ export default function PageTransition({
   // off-target (and never fully hide/reveal) with each transition. Setting
   // the real transform here, once, on an element with no prior transform
   // keeps GSAP's cache clean from the start.
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (overlayRef.current) {
       gsap.set(overlayRef.current, { yPercent: 100, opacity: 1 });
     }
@@ -49,27 +51,41 @@ export default function PageTransition({
 
   // LEAVE — fires the instant the route changes; covers the screen, then
   // swaps in the new route's content while fully hidden behind the curtain.
-  useLayoutEffect(() => {
-    if (pathname === displayPathname) return;
-
+  useIsomorphicLayoutEffect(() => {
     const overlay = overlayRef.current;
     const content = contentRef.current;
-    if (!overlay || !content) {
-      setDisplayChildren(children);
-      setDisplayPathname(pathname);
+    if (!overlay || !content) return;
+
+    if (pathname === display.pathname) {
+      // The route snapped back to what's already displayed (fast A→B→A)
+      // while a leave was mid-flight. The interrupted timeline was killed by
+      // its own effect cleanup, freezing the curtain wherever it was — so
+      // unwind it back down and restore the content instead of leaving the
+      // page half-covered with nothing scheduled to repair it.
+      if (activeTl.current) {
+        activeTl.current.kill();
+        const tl = gsap.timeline({
+          onComplete: () => {
+            activeTl.current = null;
+            gsap.set(overlay, { pointerEvents: "none" });
+          },
+        });
+        activeTl.current = tl;
+        tl.to(labelRef.current, { opacity: 0, duration: 0.15 })
+          .to(overlay, { yPercent: 100, duration: 0.4, ease: "power3.inOut" }, "<")
+          .to(content, { opacity: 1, y: 0, duration: 0.3 }, "<");
+      }
       return;
     }
 
+    // Kill any in-flight timeline; the tweens below start from the curtain's
+    // current position, so an interrupted transition re-targets smoothly.
     activeTl.current?.kill();
-    // Re-pin to the known resting baseline before tweening, in case a prior
-    // transition was interrupted mid-flight.
-    gsap.set(overlay, { yPercent: 100 });
-    gsap.set(content, { opacity: 1, y: 0 });
 
     const tl = gsap.timeline({
       onComplete: () => {
-        setDisplayChildren(children);
-        setDisplayPathname(pathname);
+        activeTl.current = null;
+        setDisplay({ children, pathname });
       },
     });
     activeTl.current = tl;
@@ -87,7 +103,7 @@ export default function PageTransition({
 
   // ENTER — fires right after the swapped content has mounted underneath
   // the curtain; reveals it by wiping the curtain away.
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!hasMounted.current) {
       hasMounted.current = true;
       return; // skip on first paint — nothing to reveal, page is already there
@@ -103,7 +119,12 @@ export default function PageTransition({
 
     const tl = gsap.timeline({
       onComplete: () => {
+        activeTl.current = null;
         gsap.set(overlay, { pointerEvents: "none" });
+        // The new page's DOM is now fully revealed and settled — recompute
+        // ScrollTrigger positions against it (ScrollManager's pathname-keyed
+        // refresh fired earlier, against the outgoing page's DOM).
+        ScrollTrigger.refresh();
       },
     });
     activeTl.current = tl;
@@ -118,7 +139,7 @@ export default function PageTransition({
       tl.kill();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayPathname]);
+  }, [display.pathname]);
 
   return (
     <>
@@ -136,7 +157,7 @@ export default function PageTransition({
           Loading
         </span>
       </div>
-      <div ref={contentRef}>{displayChildren}</div>
+      <div ref={contentRef}>{display.children}</div>
     </>
   );
 }

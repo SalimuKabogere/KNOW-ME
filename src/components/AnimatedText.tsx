@@ -49,7 +49,12 @@ export default function AnimatedText({
     const ctx = gsap.context(() => {
       const split = SplitText.create(el, {
         type: splitType,
-        mask: splitType.includes("lines") ? "lines" : "words",
+        // Mask at the coarsest level the split actually produces.
+        mask: splitType.includes("lines")
+          ? "lines"
+          : splitType.includes("words")
+            ? "words"
+            : "chars",
         autoSplit: true,
         onSplit(self) {
           const targets =

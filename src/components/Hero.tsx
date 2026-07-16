@@ -35,24 +35,32 @@ export default function Hero() {
 
       // Per-character headline reveal, woven into the same master timeline.
       if (headlineRef.current) {
+        let played = false;
         SplitText.create(headlineRef.current, {
           type: "lines, chars",
           mask: "lines",
           autoSplit: true,
           onSplit(self) {
-            return tl.fromTo(
-              self.chars,
-              { yPercent: 115, opacity: 0, rotateZ: 4 },
-              {
-                yPercent: 0,
-                opacity: 1,
-                rotateZ: 0,
+            // autoSplit reverts whatever animation onSplit returns each time
+            // it re-splits (resize across a line-wrap, late font load), so
+            // this must return a self-contained chars tween — returning the
+            // master `tl` would tear down the entire hero intro on resize.
+            if (!played) {
+              played = true;
+              const reveal = gsap.from(self.chars, {
+                yPercent: 115,
+                opacity: 0,
+                rotateZ: 4,
                 duration: 0.9,
                 stagger: 0.018,
                 ease: "power4.out",
-              },
-              "-=0.3"
-            );
+              });
+              tl.add(reveal, "-=0.3");
+              return reveal;
+            }
+            // Re-splits after the intro already played: keep the headline
+            // visible instead of replaying it mid-session.
+            return gsap.set(self.chars, { yPercent: 0, opacity: 1, rotateZ: 0 });
           },
         });
       }

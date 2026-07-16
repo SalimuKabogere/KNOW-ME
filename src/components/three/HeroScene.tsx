@@ -1,14 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, MeshDistortMaterial, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 function Blob() {
   const mesh = useRef<THREE.Mesh>(null);
   const pointer = useRef({ x: 0, y: 0 });
 
+  // The canvas sits behind the hero copy with pointer-events: none, so r3f's
+  // built-in `state.pointer` never updates (its listeners live on the canvas
+  // element, which can't receive events) — track the pointer at the window
+  // level instead.
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
       pointer.current.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -47,16 +52,11 @@ function Blob() {
  * Decorative wireframe blob rendered behind the hero copy — small, faint
  * and translucent so it reads as ambient texture, not a competing focal
  * point. Client-only (dynamic-imported with ssr:false by the caller) since
- * it touches the canvas/GPU. Skips itself under prefers-reduced-motion.
+ * it touches the canvas/GPU. Never mounts under prefers-reduced-motion.
  */
 export default function HeroScene() {
-  const [enabled, setEnabled] = useState(true);
-
-  useEffect(() => {
-    setEnabled(!window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
-
-  if (!enabled) return null;
+  const reduced = usePrefersReducedMotion();
+  if (reduced) return null;
 
   return (
     <div className="absolute inset-0 opacity-45 [mask-image:radial-gradient(circle_at_center,#000_22%,transparent_50%)]">

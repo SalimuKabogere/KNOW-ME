@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
 
 function Network({ count = 46, radius = 4.4 }: { count?: number; radius?: number }) {
   const group = useRef<THREE.Group>(null);
@@ -67,23 +68,22 @@ function Network({ count = 46, radius = 4.4 }: { count?: number; radius?: number
  * A slow-drifting particle constellation fixed behind the whole app shell —
  * it lives in the root layout (not per-page), so it never unmounts across
  * route changes. That persistence is deliberate: it reads as one continuous
- * app, not a stack of reloaded documents.
+ * app, not a stack of reloaded documents. Never mounts under
+ * prefers-reduced-motion.
  */
 export default function AmbientField() {
-  const [enabled, setEnabled] = useState(true);
-
-  useEffect(() => {
-    setEnabled(!window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
-
-  if (!enabled) return null;
+  const reduced = usePrefersReducedMotion();
+  if (reduced) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 opacity-50">
+      {/* dpr locked to 1 and no antialiasing: this canvas runs for the whole
+          session behind everything at 50% opacity — faint dots and hairlines
+          don't earn a retina-resolution render pass. */}
       <Canvas
-        dpr={[1, 1.5]}
+        dpr={1}
         camera={{ position: [0, 0, 6], fov: 50 }}
-        gl={{ alpha: true, antialias: true }}
+        gl={{ alpha: true, antialias: false }}
       >
         <Network />
       </Canvas>
