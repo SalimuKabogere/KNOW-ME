@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ScrollManager from "@/components/ScrollManager";
 import StatusBar from "@/components/StatusBar";
+import PageTransition from "@/components/PageTransition";
+import AmbientField from "@/components/three/AmbientFieldLoader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -54,9 +56,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${mono.variable}`}>
       <body className="bg-surface-ink text-[#ECECEC] font-sans antialiased selection:bg-brand-primary/30">
+        <AmbientField />
         <ScrollManager />
         <Navbar />
-        <main className="relative min-h-screen">{children}</main>
+        <main className="relative min-h-screen">
+          <PageTransition>{children}</PageTransition>
+        </main>
         <Footer />
         <StatusBar />
       </body>

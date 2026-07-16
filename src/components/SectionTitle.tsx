@@ -1,13 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap } from "@/lib/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import AnimatedText from "./AnimatedText";
 
 type Props = {
   eyebrow?: string;
@@ -68,13 +64,15 @@ export default function SectionTitle({
           {eyebrow}
         </p>
       )}
-      <h2
-        data-anim
+      <AnimatedText
+        as="h2"
+        splitType="words, chars"
+        stagger={0.015}
         className="text-balance text-3xl font-extralight leading-[1.1] tracking-tight text-white sm:text-4xl lg:text-5xl"
       >
         {title}{" "}
         {highlight && <span className="text-brand-primary">{highlight}</span>}
-      </h2>
+      </AnimatedText>
       {subtitle && (
         <p
           data-anim

@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap } from "@/lib/gsap";
 import {
   Terminal,
   Network,
@@ -17,10 +16,6 @@ import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 import SectionTitle from "./SectionTitle";
 import Corners from "./Corners";
 import { learningJourney } from "@/data/learning";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const icons: Record<string, LucideIcon> = {
   "Linux Fundamentals": Terminal,

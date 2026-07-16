@@ -2,12 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { ScrollTrigger } from "@/lib/gsap";
 
 // Recomputes ScrollTrigger positions once layout has settled (fonts, images)
 // and after each client-side route change, so reveal triggers fire at the
