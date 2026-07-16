@@ -11,7 +11,7 @@ const links = [
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="relative z-10 border-t border-white/10 bg-surface-ink">
+    <footer className="relative z-10 border-t border-white/10">
       <div className="container-x px-5 pt-20 sm:px-8 lg:px-16">
         {/* CTA + links */}
         <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">

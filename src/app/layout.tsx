@@ -7,6 +7,7 @@ import ScrollManager from "@/components/ScrollManager";
 import StatusBar from "@/components/StatusBar";
 import PageTransition from "@/components/PageTransition";
 import AmbientField from "@/components/three/AmbientFieldLoader";
+import localFont from "next/font/local";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,10 +21,28 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+const nameFont = localFont({
+  src: "../fonts/SalimuFont.otf",
+  variable: "--font-name",
+  display: "swap",
+});
+
+const headingFont = localFont({
+  src: "../fonts/Mexcellent 3d.otf",
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const pixelFont = localFont({
+  src: "../fonts/Punktype.ttf",
+  variable: "--font-pixel",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Salimu Kabogere — Web Developer & Cybersecurity Learner",
+  title: "Salimu Kabogere",
   description:
-    "Salimu Kabogere is a Computer Science student and web developer based in Uganda, building clean, responsive applications while growing in cybersecurity, cloud and software engineering.",
+    "Salimu Kabogere is a Computer Science student and web developer based in Uganda, building clean, responsive applications, cloud and software engineering.",
   keywords: [
     "Salimu Kabogere",
     "Web Developer",
@@ -38,7 +57,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Salimu Kabogere — Portfolio",
     description:
-      "Clean, responsive web applications. Growing in cybersecurity, cloud, and software engineering.",
+      "Clean, responsive web applications. Growing in emerging IT trends, cloud, and software engineering.",
     type: "website",
     locale: "en_US",
   },
@@ -54,7 +73,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${mono.variable}`}>
+    <html lang="en" className={`${inter.variable} ${mono.variable} ${nameFont.variable} ${headingFont.variable} ${pixelFont.variable}`}>
       <body className="bg-surface-ink text-[#ECECEC] font-sans antialiased selection:bg-brand-primary/30">
         <AmbientField />
         <ScrollManager />

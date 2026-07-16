@@ -1,87 +1,72 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Image from "next/image";
+import { useRef } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { gsap } from "@/lib/gsap";
-import {
-  Layout,
-  Server,
-  Smartphone,
-  CloudCog,
-  Wrench,
-  GraduationCap,
-  ChevronRight,
-  ArrowRight,
-  type LucideIcon,
-} from "lucide-react";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 import SectionTitle from "./SectionTitle";
-import Corners from "./Corners";
+import SkillArt, { type ArtKind } from "./SkillArt";
 import { skillGroups } from "@/data/skills";
 
-const groupIcons: Record<string, LucideIcon> = {
-  Backend: Server,
-  Frontend: Layout,
-  Mobile: Smartphone,
-  "Cloud & Infrastructure": CloudCog,
-  "Workflow & Systems": Wrench,
-  "Currently Learning": GraduationCap,
+/**
+ * anime.js-style bento grid: hairline-bordered tiles, each with a small
+ * always-running inline-SVG demo, mono labels, and staggered reveals.
+ * Wide tiles (first and last) also carry the long-form detail copy.
+ */
+const tileConfig: Record<string, { art: ArtKind; span?: string; detail?: boolean }> = {
+  Backend: { art: "backend", span: "sm:col-span-2", detail: true },
+  Frontend: { art: "frontend" },
+  Mobile: { art: "mobile" },
+  "Cloud & Infrastructure": { art: "cloud" },
+  "Workflow & Systems": { art: "workflow" },
+  "Currently Learning": {
+    art: "learning",
+    span: "sm:col-span-2 lg:col-span-3",
+    detail: true,
+  },
 };
 
 export default function Skills() {
-  const ref = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const firstRender = useRef(true);
-  const [active, setActive] = useState(0);
+  const ref = useRef<HTMLElement>(null);
 
-  // Initial scroll-triggered reveal of the list + panel
   useIsomorphicLayoutEffect(() => {
     if (!ref.current) return;
     const ctx = gsap.context(() => {
+      // Tiles cascade in as the grid enters the viewport.
       gsap.fromTo(
-        "[data-skill-item]",
-        { x: -20, opacity: 0 },
+        "[data-skill-tile]",
+        { y: 28, opacity: 0 },
         {
-          x: 0,
-          opacity: 1,
-          duration: 0.6,
-          ease: "power3.out",
-          stagger: 0.08,
-          scrollTrigger: { trigger: "[data-skills-layout]", start: "top 80%" },
-        }
-      );
-      gsap.fromTo(
-        "[data-skill-panel]",
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
           y: 0,
+          opacity: 1,
           duration: 0.7,
           ease: "power3.out",
-          scrollTrigger: { trigger: "[data-skills-layout]", start: "top 80%" },
+          stagger: 0.09,
+          scrollTrigger: { trigger: "[data-skills-grid]", start: "top 82%" },
         }
       );
+
+      // Draw-in strokes: every [data-draw] element carries pathLength=1,
+      // so dashoffset animates 1 → (1 - progress) regardless of geometry.
+      // Progress rings pass their fill level via data-progress; plain
+      // decorative paths omit it and draw fully.
+      gsap.utils.toArray<SVGGeometryElement>("[data-draw]").forEach((el) => {
+        const progress = parseFloat(el.getAttribute("data-progress") ?? "1");
+        gsap.fromTo(
+          el,
+          { strokeDashoffset: 1 },
+          {
+            strokeDashoffset: 1 - progress,
+            duration: 1.6,
+            ease: "power2.inOut",
+            scrollTrigger: { trigger: el, start: "top 92%" },
+          }
+        );
+      });
     }, ref);
     return () => ctx.revert();
   }, []);
-
-  // Fade the detail panel when the active skill changes (skip first mount)
-  useIsomorphicLayoutEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    if (!panelRef.current) return;
-    gsap.fromTo(
-      panelRef.current,
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
-    );
-  }, [active]);
-
-  const group = skillGroups[active];
-  const ActiveIcon = groupIcons[group.title] ?? Layout;
 
   return (
     <section id="skills" ref={ref} className="section-pad relative">
@@ -91,124 +76,90 @@ export default function Skills() {
           eyebrow="Skills"
           title="Tools I use"
           highlight="and grow with."
-          subtitle="Pick an area to see what I can build and the tools I reach for."
+          subtitle="Every area, laid out — with the tools I reach for and where I'm levelling up."
         />
 
         <div
-          data-skills-layout
-          className="flex flex-col gap-8 md:flex-row md:gap-0"
+          data-skills-grid
+          className="grid grid-cols-1 gap-px border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {/* LEFT: skill list */}
-          <ul className="shrink-0 space-y-1.5 md:w-[38%] md:pr-8 lg:w-[34%] lg:pr-12">
-            {skillGroups.map((g, i) => {
-              const Icon = groupIcons[g.title] ?? Layout;
-              const isActive = i === active;
-              return (
-                <li key={g.title} data-skill-item>
-                  <button
-                    type="button"
-                    onClick={() => setActive(i)}
-                    aria-pressed={isActive}
-                    className={`group flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-all ${
-                      isActive
-                        ? "border-brand-primary/40 bg-brand-primary/10"
-                        : "border-transparent hover:border-white/10 hover:bg-white/[0.03]"
-                    }`}
-                  >
-                    <span
-                      className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors ${
-                        isActive
-                          ? "border-brand-primary/40 bg-brand-primary/15 text-brand-primary"
-                          : "border-white/10 bg-white/[0.03] text-white/55 group-hover:text-white/80"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </span>
-                    <span
-                      className={`flex-1 text-sm font-semibold transition-colors ${
-                        isActive ? "text-white" : "text-white/70 group-hover:text-white"
-                      }`}
-                    >
-                      {g.title}
-                    </span>
-                    <ChevronRight
-                      className={`h-4 w-4 transition-all ${
-                        isActive
-                          ? "translate-x-0 text-brand-primary opacity-100"
-                          : "-translate-x-1 text-white/30 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
-                      }`}
-                    />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-
-          {/* RIGHT: active detail panel with divider */}
-          <div className="border-t border-white/10 pt-8 md:flex-1 md:border-l md:border-t-0 md:pl-8 md:pt-0 lg:pl-12">
-            <div
-              ref={panelRef}
-              data-skill-panel
-              className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-start lg:gap-10"
-            >
-              {/* Text */}
-              <div className="order-2 lg:order-1">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-primary/30 bg-brand-primary/10 text-brand-primary">
-                    <ActiveIcon className="h-5 w-5" />
+          {skillGroups.map((group, i) => {
+            const config = tileConfig[group.title] ?? { art: "frontend" as ArtKind };
+            return (
+              <article
+                key={group.title}
+                data-skill-tile
+                className={`group relative flex flex-col bg-surface-ink p-6 transition-colors duration-300 hover:bg-white/[0.02] sm:p-7 ${
+                  config.span ?? ""
+                }`}
+              >
+                <header className="flex items-baseline justify-between gap-4">
+                  <span className="font-mono text-[10px] tracking-[0.2em] text-white/35">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  <div>
-                    <h3 className="text-xl font-semibold text-white">
-                      {group.title}
-                    </h3>
-                    <p className="text-sm text-brand-primary/90">
-                      {group.description}
-                    </p>
+                  <span className="truncate font-mono text-[10px] uppercase tracking-[0.2em] text-brand-primary/70">
+                    {group.description}
+                  </span>
+                </header>
+
+                <h3 className="mt-4 font-pixel text-xl text-white">
+                  {group.title}
+                </h3>
+
+                {config.detail && (
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/55">
+                    {group.detail}
+                  </p>
+                )}
+
+                <div className={`mt-6 ${config.span ? "h-36" : "h-32"}`}>
+                  <SkillArt kind={config.art} />
+                </div>
+
+                {group.title === "Currently Learning" ? (
+                  /* Marquee of learning topics, anime.js-style ticker */
+                  <div className="marquee mt-6 border-t border-white/10 pt-4">
+                    <div className="marquee-track">
+                      {[0, 1].map((half) => (
+                        <div key={half} className="flex shrink-0 items-center">
+                          {[...group.items, ...group.items].map((item, j) => (
+                            <span
+                              key={`${half}-${j}`}
+                              className="flex items-center whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.2em] text-white/45"
+                            >
+                              {item}
+                              <span className="mx-5 text-brand-primary/60">·</span>
+                            </span>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="mt-auto flex flex-wrap gap-1.5 pt-6">
+                    {group.items.map((item) => (
+                      <span
+                        key={item}
+                        className="border border-white/10 bg-white/[0.02] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-white/60 transition-colors group-hover:border-white/20"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
 
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-white/70">
-                  {group.detail}
-                </p>
-
-                <p className="mt-7 font-mono text-xs uppercase tracking-[0.18em] text-white/40">
-                  Tools I use
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-white/75"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-
-                <Link
-                  href="/projects"
-                  className="group mt-8 inline-flex items-center gap-2 text-sm font-medium text-brand-primary transition-colors hover:text-white"
-                >
-                  Read more
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </div>
-
-              {/* Illustration */}
-              <div className="order-1 lg:order-2">
-                <div className="group relative mx-auto aspect-square w-full max-w-xs overflow-hidden border border-white/10 lg:mx-0 lg:w-72 lg:max-w-none xl:w-80">
-                  <Image
-                    src={group.image}
-                    alt={`${group.title} — illustration`}
-                    fill
-                    sizes="(min-width: 1280px) 320px, (min-width: 1024px) 288px, (min-width: 768px) 40vw, 90vw"
-                    className="object-cover"
-                  />
-                  <Corners inset />
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="mt-10 text-center">
+          <Link
+            href="/projects"
+            className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-brand-primary transition-colors hover:text-white"
+          >
+            See these in projects
+            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
     </section>

@@ -68,7 +68,7 @@ export default function SectionTitle({
         as="h2"
         splitType="words, chars"
         stagger={0.015}
-        className="text-balance text-3xl font-extralight leading-[1.1] tracking-tight text-white sm:text-4xl lg:text-5xl"
+        className="text-balance text-3xl leading-[1.15] tracking-wide text-white sm:text-4xl lg:text-5xl [font-family:var(--font-heading)]"
       >
         {title}{" "}
         {highlight && <span className="text-brand-primary">{highlight}</span>}

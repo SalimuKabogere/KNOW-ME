@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Github, Linkedin } from "lucide-react";
 import { navLinks, site } from "@/data/site";
+import logo from "@/assets/LOMA.png";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -36,9 +37,7 @@ export default function Navbar() {
       <nav className="container-x flex items-center justify-between px-5 py-3.5 sm:px-8 lg:px-16">
         {/* Logo + identity */}
         <Link href="/" className="group flex items-center gap-3" aria-label="Go to home">
-          <span className="relative inline-flex h-8 w-8 items-center justify-center rounded-md border border-white/15 bg-white/[0.03] text-[11px] font-semibold tracking-wider text-white transition-colors group-hover:border-brand-primary/60">
-            {site.initials}
-          </span>
+          <img src={logo.src} alt="LOMA" className="logo-image" />
           <span className="hidden leading-tight sm:block">
             <span className="block text-xs font-medium tracking-[0.05em] text-white">
               {site.name}

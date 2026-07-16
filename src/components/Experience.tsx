@@ -33,7 +33,7 @@ export default function Experience() {
     <section
       id="experience"
       ref={ref}
-      className="section-pad relative z-10 border-t border-white/10 bg-surface-ink"
+      className="section-pad relative z-10 border-t border-white/10"
     >
       <div className="container-x">
         <SectionTitle
@@ -52,7 +52,7 @@ export default function Experience() {
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h3 className="text-lg font-medium text-white sm:text-xl">
+                  <h3 className="font-pixel text-lg text-white sm:text-xl">
                     {item.role}
                   </h3>
                   <p className="mt-1 text-sm">

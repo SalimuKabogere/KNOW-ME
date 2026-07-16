@@ -140,7 +140,7 @@ export default function About() {
               <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-brand-primary/30 bg-brand-primary/10 text-brand-primary">
                 <Icon className="h-5 w-5" />
               </div>
-              <h3 className="mt-5 text-lg font-semibold text-white">{title}</h3>
+              <h3 className="mt-5 font-pixel text-lg text-white">{title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-white/60">{body}</p>
               <Corners inset />
             </div>

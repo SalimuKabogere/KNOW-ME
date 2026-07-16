@@ -33,7 +33,7 @@ export default function Lessons() {
     <section
       id="lessons"
       ref={ref}
-      className="section-pad relative z-10 border-t border-white/10 bg-surface-ink"
+      className="section-pad relative z-10 border-t border-white/10"
     >
       <div className="container-x">
         <SectionTitle
@@ -60,7 +60,7 @@ export default function Lessons() {
                 </span>
               </div>
 
-              <h3 className="mt-6 text-lg font-medium leading-snug text-white">
+              <h3 className="mt-6 font-pixel text-lg leading-snug text-white">
                 {lesson.title}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-white/55">

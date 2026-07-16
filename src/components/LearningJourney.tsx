@@ -158,7 +158,7 @@ export default function LearningJourney() {
                         <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-brand-primary/30 bg-brand-primary/10 text-brand-primary">
                           <Icon className="h-4.5 w-4.5" />
                         </div>
-                        <h3 className="text-lg font-semibold text-white">
+                        <h3 className="font-pixel text-lg text-white">
                           {item.title}
                         </h3>
                       </div>

@@ -70,7 +70,7 @@ function CaseRow({ project, index }: { project: Project; index: number }) {
           <span className={statusStyle[project.status]}>{project.status}</span>
         </div>
 
-        <h3 className="mt-5 text-2xl font-light tracking-tight text-white sm:text-3xl">
+        <h3 className="mt-5 font-pixel text-2xl text-white sm:text-3xl">
           {project.title}
         </h3>
         <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/60 sm:text-base">
@@ -264,7 +264,7 @@ export default function Projects() {
                 <span className="h-px w-8 bg-white/25" />
                 In the pipeline
               </p>
-              <h3 className="text-2xl font-extralight tracking-tight text-white sm:text-3xl">
+              <h3 className="font-pixel text-2xl text-white sm:text-3xl">
                 What I&apos;m building next
               </h3>
             </div>
