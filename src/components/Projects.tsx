@@ -2,8 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap } from "@/lib/gsap";
 import { Github, ArrowUpRight } from "lucide-react";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 import SectionTitle from "./SectionTitle";
@@ -15,10 +14,6 @@ import {
   type Project,
   type ProjectCategory,
 } from "@/data/projects";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const statusStyle: Record<Project["status"], string> = {
   Live: "text-emerald-300",

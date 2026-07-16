@@ -1,62 +1,81 @@
 "use client";
 
 import { useRef } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight } from "lucide-react";
+import { gsap, SplitText } from "@/lib/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 import { site } from "@/data/site";
 import Corners from "./Corners";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+const HeroScene = dynamic(() => import("./three/HeroScene"), { ssr: false });
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
 
   useIsomorphicLayoutEffect(() => {
     if (!root.current) return;
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
       tl.fromTo(
         "[data-hero-portrait]",
         { scale: 0.9, opacity: 0 },
         { scale: 1, opacity: 1, duration: 1, ease: "expo.out" }
-      )
-        .fromTo(
-          "[data-hero-kicker]",
-          { y: 14, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6 },
-          "-=0.6"
-        )
-        .fromTo(
-          "[data-hero-headline] .line",
-          { yPercent: 110, opacity: 0 },
-          {
-            yPercent: 0,
-            opacity: 1,
-            duration: 1,
-            stagger: 0.1,
-            ease: "power4.out",
+      ).fromTo(
+        "[data-hero-kicker]",
+        { y: 14, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6 },
+        "-=0.6"
+      );
+
+      // Per-character headline reveal, woven into the same master timeline.
+      if (headlineRef.current) {
+        let played = false;
+        SplitText.create(headlineRef.current, {
+          type: "lines, chars",
+          mask: "lines",
+          autoSplit: true,
+          onSplit(self) {
+            // autoSplit reverts whatever animation onSplit returns each time
+            // it re-splits (resize across a line-wrap, late font load), so
+            // this must return a self-contained chars tween — returning the
+            // master `tl` would tear down the entire hero intro on resize.
+            if (!played) {
+              played = true;
+              const reveal = gsap.from(self.chars, {
+                yPercent: 115,
+                opacity: 0,
+                rotateZ: 4,
+                duration: 0.9,
+                stagger: 0.018,
+                ease: "power4.out",
+              });
+              tl.add(reveal, "-=0.3");
+              return reveal;
+            }
+            // Re-splits after the intro already played: keep the headline
+            // visible instead of replaying it mid-session.
+            return gsap.set(self.chars, { yPercent: 0, opacity: 1, rotateZ: 0 });
           },
-          "-=0.3"
-        )
-        .fromTo(
-          "[data-hero-sub]",
-          { y: 18, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7 },
-          "-=0.5"
-        )
-        .fromTo(
-          "[data-hero-cta] > *",
-          { y: 14, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 },
-          "-=0.4"
-        );
+        });
+      }
+
+      tl.fromTo(
+        "[data-hero-sub]",
+        { y: 18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7 },
+        "-=0.5"
+      ).fromTo(
+        "[data-hero-cta] > *",
+        { y: 14, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, stagger: 0.08 },
+        "-=0.4"
+      );
 
       // Scroll-linked fade/scale as the next section rises over the pinned hero
       gsap.to("[data-hero-fade]", {
@@ -85,6 +104,7 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-grid mask-radial opacity-[0.18]" />
         <div className="absolute left-1/2 top-1/3 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-brand-primary/[0.07] blur-[120px]" />
+        <HeroScene />
       </div>
 
       <div
@@ -118,19 +138,13 @@ export default function Hero() {
 
         {/* Headline */}
         <h1
-          data-hero-headline
+          ref={headlineRef}
           className="max-w-4xl text-balance text-[2.35rem] font-extralight leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl"
         >
-          <span className="block overflow-hidden">
-            <span className="line block">I build software for the</span>
-          </span>
-          <span className="block overflow-hidden">
-            <span className="line block">
-              <span className="text-brand-primary">web</span>,{" "}
-              <span className="text-brand-primary">cloud</span> and{" "}
-              <span className="text-brand-primary">control</span>.
-            </span>
-          </span>
+          I build software for the{" "}
+          <span className="text-brand-primary">web</span>,{" "}
+          <span className="text-brand-primary">cloud</span> and{" "}
+          <span className="text-brand-primary">control</span>.
         </h1>
 
         {/* Subtitle */}
@@ -161,7 +175,7 @@ export default function Hero() {
             <Corners />
           </a>
         </div>
-      </div>      
+      </div>
     </section>
   );
 }
