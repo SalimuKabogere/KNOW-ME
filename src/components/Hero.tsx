@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { gsap, SplitText } from "@/lib/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
@@ -225,15 +224,15 @@ export default function Hero() {
             data-hero-cta
             className="mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start"
           >
-            <Link href="/projects" className="btn-frame group">
+            <a href="#projects" className="btn-frame group">
               View projects
               <ArrowRight className="h-4 w-4" />
               <Corners />
-            </Link>
-            <Link href="/contact" className="btn-frame group">
+            </a>
+            <a href="#contact" className="btn-frame group">
               Get in touch
               <Corners />
-            </Link>
+            </a>
             <a href={site.cvUrl} download className="btn-frame group">
               Download CV
               <Corners />

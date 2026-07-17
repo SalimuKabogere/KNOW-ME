@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
@@ -153,13 +152,13 @@ export default function Skills() {
         </div>
 
         <div className="mt-10 text-center">
-          <Link
-            href="/projects"
+          <a
+            href="#projects"
             className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-brand-primary transition-colors hover:text-white"
           >
             See these in projects
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-          </Link>
+          </a>
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Contact from "@/components/Contact";
 
 export const metadata: Metadata = {
-  title: "Contact — Salimu Kabogere",
+  title: "Contact",
 };
 
 export default function ContactPage() {
