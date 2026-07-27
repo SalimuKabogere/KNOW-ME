@@ -66,7 +66,7 @@ export const featuredProjects: Project[] = [
     category: "Tools",
     status: "In Progress",
     github: "https://github.com/SalimuKabogere/AIBOS",
-    demo: "https://eezytask.vercel.app/",
+    demo: "https://aibos-zeta.vercel.app/",
     image: "/task.png",
     accent: "warm",
   },
