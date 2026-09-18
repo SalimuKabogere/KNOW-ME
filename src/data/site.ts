@@ -1,7 +1,7 @@
 export const site = {
   name: "Salimu Kabogere",
-  initials: "SK",
-  role: "Web Developer · Cybersecurity Learner",
+  initials: "Loma",
+  role: "Full Stack Developer",
   location: "Uganda",
   email: "salimuloma@gmail.com",
   phone: "+256772043489",

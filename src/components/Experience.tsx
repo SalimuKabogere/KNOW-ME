@@ -6,6 +6,7 @@ import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 import SectionTitle from "./SectionTitle";
 import Corners from "./Corners";
 import { experience } from "@/data/experience";
+import { MapPin } from "lucide-react";
 
 export default function Experience() {
   const ref = useRef<HTMLDivElement>(null);
@@ -23,7 +24,7 @@ export default function Experience() {
           ease: "power3.out",
           stagger: 0.12,
           scrollTrigger: { trigger: "[data-exp-list]", start: "top 82%" },
-        }
+        },
       );
     }, ref);
     return () => ctx.revert();
@@ -62,12 +63,17 @@ export default function Experience() {
                 </div>
                 <div className="flex shrink-0 items-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-white/45">
                   {item.current && (
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="relative inline-flex h-1.5 w-1.5">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
-                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    <span className="group/current relative inline-flex items-center gap-1.5">
+                      <MapPin className="h-5 w-5 text-emerald-400" />
+                      <span
+                        className="
+                      pointer-events-none 
+                      absolute top-full ml-1.5 whitespace-nowrap 
+                      text-sky-300/80 opacity-0 -translate-x-1 transition-all 
+                      duration-200 group-hover/current:opacity-100 group-hover/current:translate-x-0"
+                      >
+                        Current
                       </span>
-                      <span className="text-emerald-300/80">Current</span>
                     </span>
                   )}
                   <span>{item.period}</span>

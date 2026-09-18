@@ -3,10 +3,13 @@
 import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "@/lib/gsap";
-import { Github, ArrowUpRight } from "lucide-react";
+import { Github, ArrowUpRight, Loader, Clipboard, Globe } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 import SectionTitle from "./SectionTitle";
 import Corners from "./Corners";
+import { stackIcons } from "@/lib/stackIcons";
+import { Package } from "lucide-react"
 import {
   featuredProjects,
   upcomingProjects,
@@ -15,10 +18,23 @@ import {
   type ProjectCategory,
 } from "@/data/projects";
 
-const statusStyle: Record<Project["status"], string> = {
-  Live: "text-emerald-300",
-  "In Progress": "text-amber-300",
-  Concept: "text-white/50",
+const statusStyle: Record<Project["status"], {
+  icon: LucideIcon;
+  className: string;
+} 
+> = {
+  Live: {
+    icon: Globe,
+    className: "text-emerald-400",
+  }, 
+  "In Progress": {
+    icon: Loader,
+    className: "text-sky-400",
+  },
+  Concept: {
+    icon: Clipboard,
+    className: "text-white/40",
+  },
 };
 
 function CaseRow({ project, index }: { project: Project; index: number }) {
@@ -64,10 +80,21 @@ function CaseRow({ project, index }: { project: Project; index: number }) {
           <span className="text-white/70">
             {String(index + 1).padStart(2, "0")}
           </span>
-          <span className="h-px w-6 bg-white/20" />
+          
           <span>{project.category}</span>
-          <span className="h-px w-6 bg-white/20" />
-          <span className={statusStyle[project.status]}>{project.status}</span>
+          <span className="h-px w-1 bg-white/20" />
+          {(() => { 
+            const { icon: StatusIcon, className } = statusStyle[project.status];
+            return (
+              <span className={`inline-flex items-center gap-1.5 ${className}`}>
+                <StatusIcon className={`h-3.5 w-3.5 ${project.status === "In Progress" ? "animate-spin" : ""}`} 
+                />
+                {project.status}
+              </span>
+            );
+          })()}
+
+          
         </div>
 
         <h3 className="mt-5 font-pixel text-2xl text-white sm:text-3xl">
@@ -77,15 +104,29 @@ function CaseRow({ project, index }: { project: Project; index: number }) {
           {project.description}
         </p>
 
-        <div className="mt-5 flex flex-wrap gap-1.5">
-          {project.stack.map((tech) => (
-            <span
-              key={tech}
-              className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-white/55"
-            >
-              {tech}
-            </span>
-          ))}
+        <div className="mt-5 flex flex-wrap gap-2">
+          {project.stack.map((tech) => {
+            const Icon = stackIcons[tech];
+            return (
+              <span
+              key = {tech}
+              title = {tech}
+              className="flex w-7 h-7 items-center
+              justify-center rounded-md border border-white/10
+              bg-white/[0.03]
+              px-2 py-1
+              font-mono text-[10px] uppercase tracking-wider text-white/55
+              "
+              > 
+              {Icon ? (
+                <Icon className="h-3.5 w-3.5 text-white/70" />
+              ) : (
+                <Package className="h-3.5 w-3.5 text-white/40" />
+              )}
+
+              </span>
+            );
+          })}
         </div>
 
         <div className="mt-7 flex flex-wrap items-center gap-6">
@@ -130,7 +171,6 @@ function PipelineRow({ project }: { project: Project }) {
       <div className="min-w-0">
         <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/40">
           <span>{project.category}</span>
-          <span className={statusStyle[project.status]}>{project.status}</span>
         </div>
         <h4 className="mt-2 text-lg font-light text-white">{project.title}</h4>
         <p className="mt-1 max-w-xl truncate text-sm text-white/50">

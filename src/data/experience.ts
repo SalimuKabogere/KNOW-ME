@@ -10,14 +10,24 @@ export type ExperienceItem = {
 
 export const experience: ExperienceItem[] = [
   {
+    role: "Fullstack Engineer",
+    company: "Agromavericks",
+    period: "Sept 2026 — Present",
+    location: "Interservice Tower, Lumumba Avenue, Kampala",
+    description:
+      "Learning the core fundermentals of designing systems. This includes data modeling and also migration. I also have been effective in using js and understanding the core concepts related to building backend and frontend systems.",
+    stack: ["Hono JS", "Next.js", "Convex", "Cloudflare", "Monolith"],
+    current: true,
+  },
+  {
     role: "Software Engineer",
     company: "AIBOS Uganda",
-    period: "Dec 2025 — Present",
+    period: "Dec 2025 — July 2026",
     location: "Arie Towers, Kampala",
     description:
       "Building across teams — mobile development with React Native & Expo plus the matching web app, and an AI video platform that generates videos using multiple models in a monolith architecture. Learning a lot alongside the wider engineering team.",
-    stack: ["React Native", "Expo", "Next.js", "AI / LLMs", "Monolith"],
-    current: true,
+    stack: ["React Native", "Expo", "Next.js", "AI / LLMs", "Microservices"],
+    current: false,
   },
   {
     role: "Undergraduate Trainee",

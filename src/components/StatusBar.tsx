@@ -31,23 +31,17 @@ export default function StatusBar() {
       <div className="container-x flex items-center justify-between px-5 py-2.5 sm:px-8 lg:px-16">
         {/* Left */}
         <div className="flex items-center gap-4">
-          <span className="hud-label">Kampala, Uganda</span>
-          <span className="hidden hud-label sm:inline">/ Lat 0.31°N</span>
+          <span className="hud-label">salimuloma@gmail.com</span>
         </div>
 
         {/* Center */}
-        <span className="hidden hud-label md:inline">Portfolio — 2026</span>
+        <span className="hidden hud-label md:inline">+256772043489</span>
 
         {/* Right */}
         <div className="flex items-center gap-4">
           <span className="inline-flex items-center gap-2">
-            <span className="relative inline-flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            </span>
-            <span className="hud-label !text-white/55">Open to work</span>
+            <span className="hud-label !text-white/55">Optimus-Prime</span>
           </span>
-          <span className="hud-label tabular-nums">{time}</span>
         </div>
       </div>
     </div>
