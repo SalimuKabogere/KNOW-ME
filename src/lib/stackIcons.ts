@@ -4,7 +4,7 @@ import {
     SiPython,
     SiHono,
     SiTypescript,
-    SiOpenai,
+    // SiOpenai,
     SiTailwindcss,
     SiNpm,
     SiFastapi,
@@ -17,10 +17,10 @@ export const stackIcons: Record<string, IconType> = {
     React: SiReact,
     "Hono JS": SiHono,
     TypeScript: SiTypescript,
-    "OpenAI / LLMs": SiOpenai,
+    // "OpenAI / LLMs": SiOpenai,
     Tailwind: SiTailwindcss,
     NPM: SiNpm,
     FastAPI: SiFastapi,
-    LLM: SiOpenai,
+    // LLM: SiOpenai,
 
 }
